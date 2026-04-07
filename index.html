@@ -1,731 +1,325 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MindSync</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MindSync v3</title>
+
 <style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-/* ── Reset ──────────────────────────────────────── */
-*, *::before, *::after {
-box-sizing: border-box; margin: 0; padding: 0;
--webkit-tap-highlight-color: transparent;
+:root{
+--pink:#ff375f;
+--purple:#bf5af2;
+--bg:#000;
+--glass:rgba(255,255,255,.06);
+--text:#fff;
 }
 
-/* ── Tokens ─────────────────────────────────────── */
-:root {
-–pink:   #FF375F;
-–rose:   #FF6B8A;
-–blue:   #0A84FF;
-–purple: #BF5AF2;
-–green:  #30D158;
-–s1: #1C1C1E;
-–s2: #2C2C2E;
-–s3: #3A3A3C;
-–text: #FFFFFF;
-–t2: rgba(255,255,255,.65);
-–t3: rgba(255,255,255,.38);
-–sep: rgba(255,255,255,.11);
-–r: 20px;
-–r2: 16px;
+body{
+height:100dvh;
+background:#000;
+font-family:-apple-system;
+color:#fff;
+overflow:hidden;
 }
 
-/* ── Base ───────────────────────────────────────── */
-html { height: 100%; background: #000; }
-body {
-height: 100dvh;
-background: #000;
-color: var(–text);
-font-family: -apple-system, BlinkMacSystemFont, “Helvetica Neue”, sans-serif;
--webkit-font-smoothing: antialiased;
-overflow: hidden;
-position: fixed; width: 100%;
-user-select: none; -webkit-user-select: none;
-}
-
-/* ── Ambient glow ───────────────────────────────── */
-#glow {
-position: fixed; inset: 0; pointer-events: none; z-index: 0;
+/* glow */
+#bg{
+position:fixed;
+inset:0;
 background:
-radial-gradient(ellipse 80% 55% at 10% 5%,  rgba(255,55,95,.18) 0%, transparent 60%),
-radial-gradient(ellipse 60% 50% at 90% 95%,  rgba(191,90,242,.18) 0%, transparent 60%),
-radial-gradient(ellipse 70% 60% at 50% 50%,  rgba(10,132,255,.07) 0%, transparent 70%);
+radial-gradient(circle at 20% 20%,rgba(255,55,95,.25),transparent),
+radial-gradient(circle at 80% 80%,rgba(191,90,242,.25),transparent);
+z-index:-1;
 }
 
-/* ── App ────────────────────────────────────────── */
-#app {
-position: relative; height: 100dvh; width: 100%;
-overflow: hidden; z-index: 1;
-}
-
-/* ── Screens ────────────────────────────────────── */
-.screen {
-position: absolute; inset: 0;
-display: flex; flex-direction: column;
+/* screens */
+.screen{
+position:absolute;
+inset:0;
 padding:
-calc(env(safe-area-inset-top, 44px) + 16px)
+calc(env(safe-area-inset-top)+20px)
 20px
-calc(env(safe-area-inset-bottom, 20px) + 20px);
-opacity: 0;
-transform: translateY(32px) scale(.97);
-pointer-events: none;
-transition: opacity .42s cubic-bezier(.4,0,.2,1),
-transform .42s cubic-bezier(.4,0,.2,1);
+calc(env(safe-area-inset-bottom)+20px);
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+opacity:0;
+transform:translateY(20px);
+transition:.4s;
 }
-.screen.show {
-opacity: 1; transform: none; pointer-events: all;
-}
-.screen.out {
-opacity: 0; transform: translateY(-18px) scale(1.01);
-transition-duration: .24s;
+.screen.show{opacity:1;transform:none}
+
+/* card */
+.card{
+background:var(--glass);
+backdrop-filter:blur(20px);
+border-radius:24px;
+padding:16px;
 }
 
-/* ════════════════════════════════════════════════
-JOIN SCREEN
-════════════════════════════════════════════════ */
-#s-join { justify-content: flex-end; }
-
-/* floating logo centred in top half */
-.logo-zone {
-position: absolute; top: 0; left: 0; right: 0;
-height: 52%;
-display: flex; flex-direction: column;
-align-items: center; justify-content: center;
-gap: 0;
-pointer-events: none;
+/* button */
+.btn{
+padding:16px;
+border:none;
+border-radius:20px;
+font-size:17px;
+font-weight:600;
+background:linear-gradient(135deg,var(--pink),var(--purple));
+color:#fff;
 }
 
-/* heart icon */
-.heart-icon {
-width: 88px; height: 88px;
-background: linear-gradient(145deg, var(–pink), var(–purple));
-border-radius: 24px;
-display: flex; align-items: center; justify-content: center;
-box-shadow:
-0 24px 56px rgba(255,55,95,.45),
-0 0 0 1px rgba(255,255,255,.14) inset;
-margin-bottom: 20px;
-animation: float 4s ease-in-out infinite;
-}
-@keyframes float {
-0%, 100% { transform: translateY(0); }
-50%       { transform: translateY(-6px); }
-}
-.heart-icon svg { width: 46px; height: 46px; }
-
-.app-title {
-font-size: 38px; font-weight: 700; letter-spacing: -.8px;
-color: #fff;
-}
-.app-sub {
-font-size: 15px; color: var(–t2); margin-top: 6px; font-weight: 400;
+/* title */
+.title{
+font-size:36px;
+font-weight:700;
+text-align:center;
+background:linear-gradient(135deg,var(--pink),var(--purple));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
-/* form card */
-.form-card {
-background: var(–s1);
-border-radius: var(–r);
-border: 1px solid var(–sep);
-overflow: hidden;
-margin-bottom: 12px;
-}
-.field {
-display: flex; flex-direction: column;
-padding: 14px 18px 13px;
-}
-.field + .field { border-top: 1px solid var(–sep); }
-.field label {
-font-size: 11px; font-weight: 600;
-color: var(–t3);
-text-transform: uppercase; letter-spacing: .08em;
-margin-bottom: 6px;
-}
-.field input {
-background: transparent; border: none; outline: none;
-color: #fff;                /* ← explicit white, never inherit from body */
-font-size: 17px; font-family: inherit; font-weight: 400;
--webkit-appearance: none;
-caret-color: var(–pink);
-/* kill iOS autofill yellow */
--webkit-text-fill-color: #fff;
-}
-.field input::placeholder { color: rgba(255,255,255,.28); }
-
-/* kill autocomplete background */
-.field input:-webkit-autofill,
-.field input:-webkit-autofill:focus {
--webkit-box-shadow: 0 0 0 100px var(–s1) inset !important;
--webkit-text-fill-color: #fff !important;
+/* inputs */
+input,textarea{
+width:100%;
+background:transparent;
+border:none;
+color:#fff;
+font-size:16px;
+outline:none;
 }
 
-#roomInp { text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
-
-/* buttons */
-.btn {
-width: 100%; padding: 17px;
-border-radius: var(–r2); border: none; outline: none;
-font-size: 17px; font-weight: 600; font-family: inherit;
-cursor: pointer; letter-spacing: -.15px;
--webkit-appearance: none;
-transition: opacity .12s, transform .12s;
-}
-.btn:active  { opacity: .8; transform: scale(.97); }
-.btn:disabled { opacity: .35; transform: none !important; cursor: default; }
-.btn-love {
-background: linear-gradient(135deg, var(–pink) 0%, var(–purple) 100%);
-color: #fff;
-box-shadow: 0 8px 24px rgba(255,55,95,.38);
-}
-.btn-ghost { background: var(–s2); color: var(–blue); }
-
-.join-hint {
-text-align: center; font-size: 12px; color: var(–t3);
-margin-top: 14px; line-height: 1.6;
+/* question */
+#qText{
+font-size:26px;
+text-align:center;
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
 }
 
-/* ════════════════════════════════════════════════
-QUESTION SCREEN
-════════════════════════════════════════════════ */
-#s-question { justify-content: space-between; }
-
-/* top bar */
-.q-bar {
-display: flex; align-items: center; justify-content: space-between;
-}
-.q-chip {
-background: rgba(255,55,95,.14); color: var(–rose);
-font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-padding: 5px 13px; border-radius: 100px;
-}
-.q-progress {
-font-size: 13px; color: var(–t3); font-weight: 500;
+/* typing */
+#typing{
+font-size:13px;
+opacity:.6;
+margin-bottom:6px;
 }
 
-/* centre question */
-.q-mid {
-flex: 1; display: flex; align-items: center; justify-content: center;
-padding: 20px 4px;
-}
-#qText {
-font-size: 28px; font-weight: 700;
-text-align: center; line-height: 1.25; letter-spacing: -.45px;
-color: #fff;                /* solid white — no gradient clip on mobile */
+/* send */
+.send{
+width:44px;height:44px;
+border-radius:50%;
+background:linear-gradient(135deg,var(--pink),var(--purple));
+display:flex;align-items:center;justify-content:center;
 }
 
-/* bottom input zone */
-.q-foot {}
-
-/* typing row */
-.type-row {
-height: 22px; display: flex; align-items: center;
-padding-left: 2px; margin-bottom: 8px;
+/* result */
+#score{
+font-size:52px;
+text-align:center;
+font-weight:700;
 }
-#typeEl {
-display: flex; align-items: center; gap: 8px;
-font-size: 13px; color: var(–t2);
-opacity: 0; transform: translateY(3px);
-transition: opacity .22s, transform .22s;
+#tag{
+text-align:center;
+margin-top:8px;
+font-size:18px;
+opacity:.8;
 }
-#typeEl.on { opacity: 1; transform: none; }
-.bubbles { display: flex; gap: 3px; align-items: center; }
-.bubbles i {
-display: block; width: 5px; height: 5px; border-radius: 50%;
-background: var(–rose); font-style: normal;
-animation: bbl 1.1s ease-in-out infinite;
-}
-.bubbles i:nth-child(2) { animation-delay: .18s; }
-.bubbles i:nth-child(3) { animation-delay: .36s; }
-@keyframes bbl {
-0%, 80%, 100% { transform: scale(.7); opacity: .4; }
-40%           { transform: scale(1);  opacity: 1;  }
-}
-
-/* answer box */
-.ans-wrap {
-background: var(–s1);
-border-radius: var(–r);
-border: 1px solid var(–sep);
-overflow: hidden;
-transition: border-color .18s, box-shadow .18s;
-}
-.ans-wrap.focused {
-border-color: rgba(255,55,95,.5);
-box-shadow: 0 0 0 3px rgba(255,55,95,.12);
-}
-
-#ansInp {
-display: block; width: 100%;
-padding: 16px 18px 6px;
-background: transparent; border: none; outline: none;
-color: #fff;                   /* ← explicit — critical fix */
--webkit-text-fill-color: #fff; /* ← kills iOS override */
-font-size: 17px; font-family: inherit; font-weight: 400;
-resize: none; min-height: 88px; max-height: 130px;
-caret-color: var(–pink);
--webkit-appearance: none;
-}
-#ansInp::placeholder { color: rgba(255,255,255,.28); }
-
-.ans-row {
-display: flex; align-items: center; justify-content: space-between;
-padding: 4px 14px 12px;
-}
-#charEl { font-size: 12px; color: var(–t3); }
-
-/* send button */
-.send-btn {
-width: 40px; height: 40px; border-radius: 50%;
-background: linear-gradient(135deg, var(–pink), var(–purple));
-border: none; outline: none;
-display: flex; align-items: center; justify-content: center;
-cursor: pointer; flex-shrink: 0;
-box-shadow: 0 4px 14px rgba(255,55,95,.42);
-transition: opacity .13s, transform .13s;
-}
-.send-btn:active  { opacity: .8; transform: scale(.88); }
-.send-btn:disabled { opacity: .28; transform: none; cursor: default; box-shadow: none; }
-.send-btn svg { width: 17px; height: 17px; fill: #fff; }
-
-/* waiting state */
-.wait-msg {
-display: none; text-align: center;
-padding: 18px 0 4px;
-font-size: 15px; color: var(–t2); letter-spacing: -.1px;
-}
-.wait-msg.on { display: block; }
-
-/* ════════════════════════════════════════════════
-RESULT SCREEN
-════════════════════════════════════════════════ */
-#s-result { justify-content: space-between; }
-
-.res-header { text-align: center; padding-top: 4px; }
-.res-eyebrow {
-font-size: 12px; font-weight: 600; color: var(–t3);
-text-transform: uppercase; letter-spacing: .1em;
-}
-.res-tag {
-font-size: 26px; font-weight: 700; letter-spacing: -.4px;
-color: #fff; margin-top: 6px;
-}
-
-/* progress ring */
-.ring-zone { display: flex; justify-content: center; margin: 4px 0; }
-.ring-rel  { position: relative; width: 172px; height: 172px; }
-.ring-svg  { position: absolute; inset: 0; transform: rotate(-90deg); }
-.r-track   { fill: none; stroke: rgba(255,255,255,.08); stroke-width: 10; }
-#pRing {
-fill: none; stroke: url(#rGrad); stroke-width: 10; stroke-linecap: round;
-stroke-dasharray: 482; stroke-dashoffset: 482;
-transition: stroke-dashoffset .04s linear;
-}
-.ring-center {
-position: absolute; inset: 0;
-display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-#scoreNum {
-font-size: 46px; font-weight: 700; letter-spacing: -2px; color: #fff;
-}
-.ring-lbl {
-font-size: 11px; color: var(–t2); margin-top: 2px;
-text-transform: uppercase; letter-spacing: .06em;
-}
-
-/* answer cards */
-.cards { display: flex; flex-direction: column; gap: 10px; flex: 1; margin: 0 0 14px; }
-.card {
-flex: 1;
-background: var(–s1);
-border-radius: var(–r); border: 1px solid var(–sep);
-padding: 14px 18px;
-display: flex; flex-direction: column; gap: 5px;
-}
-.card-name {
-font-size: 11px; font-weight: 700; color: var(–t3);
-text-transform: uppercase; letter-spacing: .08em;
-}
-.card-ans {
-font-size: 18px; font-weight: 500; line-height: 1.32;
-letter-spacing: -.2px; color: #fff;
-}
-
-/* ── Shared utils ───────────────────────────────── */
-@keyframes shk {
-0%,100% { transform: translateX(0); }
-20%     { transform: translateX(-8px); }
-40%     { transform: translateX(8px); }
-60%     { transform: translateX(-5px); }
-80%     { transform: translateX(5px); }
-}
-.shake { animation: shk .38s ease; }
 
 </style>
 </head>
+
 <body>
 
-<!-- ambient glow -->
-
-<div id="glow"></div>
-
-<!-- SVG gradient defs -->
-
-<svg width="0" height="0" style="position:absolute">
-  <defs>
-    <linearGradient id="rGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%"   stop-color="#FF375F"/>
-      <stop offset="100%" stop-color="#BF5AF2"/>
-    </linearGradient>
-  </defs>
-</svg>
+<div id="bg"></div>
 
 <div id="app">
 
-  <!-- ══ JOIN ══ -->
+<!-- JOIN -->
+<div class="screen show" id="join">
+<div></div>
 
-  <div class="screen" id="s-join">
+<div>
+<div class="title">MindSync</div>
 
-```
-<div class="logo-zone">
-  <div class="heart-icon">
-    <!-- heart SVG -->
-    <svg viewBox="0 0 46 42" fill="none">
-      <path d="M23 39C23 39 3 26.5 3 13.5C3 8.25329 7.25329 4 12.5 4C16.1569 4 19.3431 6.10558 21.1716 9.14214C21.6851 10.0144 22.2898 10 23 10C23.7102 10 24.3149 10.0144 24.8284 9.14214C26.6569 6.10558 29.8431 4 33.5 4C38.7467 4 43 8.25329 43 13.5C43 26.5 23 39 23 39Z"
-        fill="white" fill-opacity=".92"/>
-    </svg>
-  </div>
-  <div class="app-title">MindSync</div>
-  <div class="app-sub">How connected are you, really?</div>
+<div class="card" style="margin-top:20px">
+<input id="name" placeholder="Your name">
+<input id="room" placeholder="Room code" style="margin-top:10px">
+</div>
 </div>
 
-<div class="form-card">
-  <div class="field">
-    <label for="nameInp">Your Name</label>
-    <input id="nameInp" type="text" placeholder="Enter your name"
-      maxlength="30" autocomplete="given-name"
-      autocorrect="off" spellcheck="false">
-  </div>
-  <div class="field">
-    <label for="roomInp">Room Code</label>
-    <input id="roomInp" type="text" placeholder="e.g. LOVE42"
-      maxlength="10" autocorrect="off" autocapitalize="characters"
-      spellcheck="false">
-  </div>
+<button class="btn" id="start">Enter Room ♡</button>
 </div>
 
-<button class="btn btn-love" id="joinBtn">Enter Room ♡</button>
-<p class="join-hint">Share the same room code with your partner.</p>
-```
+<!-- QUESTION -->
+<div class="screen" id="question">
 
-  </div>
+<div id="qText"></div>
 
-  <!-- ══ QUESTION ══ -->
+<div>
+<div id="typing"></div>
 
-  <div class="screen" id="s-question">
+<div class="card">
+<textarea id="ans" rows="1" maxlength="100" placeholder="Type your answer..."></textarea>
 
-```
-<div class="q-bar">
-  <span class="q-chip">For You Two</span>
-  <span class="q-progress" id="qOf">1 of 8</span>
+<div style="display:flex;justify-content:flex-end;margin-top:10px">
+<div class="send" id="send">➤</div>
 </div>
-
-<div class="q-mid">
-  <p id="qText"></p>
 </div>
-
-<div class="q-foot">
-  <!-- typing indicator -->
-  <div class="type-row">
-    <div id="typeEl">
-      <div class="bubbles"><i></i><i></i><i></i></div>
-      <span id="typeWho"></span>
-    </div>
-  </div>
-
-  <!-- answer input -->
-  <div class="ans-wrap" id="ansWrap">
-    <textarea id="ansInp"
-      placeholder="Type your answer…"
-      maxlength="80" rows="1"
-      user-select="text" -webkit-user-select="text"
-    ></textarea>
-    <div class="ans-row">
-      <span id="charEl">0 / 80</span>
-      <button class="send-btn" id="sendBtn" aria-label="Send">
-        <svg viewBox="0 0 24 24">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- waiting -->
-  <div class="wait-msg" id="waitMsg">
-    💭 Waiting for your partner…
-  </div>
 </div>
-```
-
-  </div>
-
-  <!-- ══ RESULT ══ -->
-
-  <div class="screen" id="s-result">
-
-```
-<div class="res-header">
-  <div class="res-eyebrow">Connection Score</div>
-  <div class="res-tag" id="resTag"></div>
-</div>
-
-<div class="ring-zone">
-  <div class="ring-rel">
-    <svg class="ring-svg" width="172" height="172" viewBox="0 0 172 172">
-      <circle class="r-track" cx="86" cy="86" r="76.75"/>
-      <circle id="pRing"     cx="86" cy="86" r="76.75"/>
-    </svg>
-    <div class="ring-center">
-      <div id="scoreNum">0%</div>
-      <div class="ring-lbl">in sync</div>
-    </div>
-  </div>
-</div>
-
-<div class="cards">
-  <div class="card">
-    <div class="card-name" id="c1n"></div>
-    <div class="card-ans"  id="c1a"></div>
-  </div>
-  <div class="card">
-    <div class="card-name" id="c2n"></div>
-    <div class="card-ans"  id="c2a"></div>
-  </div>
-</div>
-
-<button class="btn btn-love" id="nextBtn">Next Question ♡</button>
-```
-
-  </div>
 
 </div>
 
-<!-- ── Firebase + App logic ── -->
+<!-- RESULT -->
+<div class="screen" id="result">
+
+<div></div>
+
+<div>
+<div id="score">0%</div>
+<div id="tag"></div>
+</div>
+
+<button class="btn" id="next">Next ♡</button>
+
+</div>
+
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, remove, off }
-  from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, remove } 
+from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-/* ── Firebase ──────────────────────────────────── */
+/* 🔥 YOUR FIREBASE CONFIG */
 const db = getDatabase(initializeApp({
-  apiKey:            "AIzaSyA2dbln4SU5tcxgekWt_kUkoz6rBmMhLk4",
-  authDomain:        "mindsync-5aea1.firebaseapp.com",
-  databaseURL:       "https://mindsync-5aea1-default-rtdb.firebaseio.com",
-  projectId:         "mindsync-5aea1",
-  storageBucket:     "mindsync-5aea1.firebasestorage.app",
-  messagingSenderId: "419028983975",
-  appId:             "1:419028983975:web:9ba60800901961d731fb82"
+apiKey: "AIzaSyA2dbln4SU5tcxgekWt_kUkoz6rBmMhLk4",
+authDomain: "mindsync-5aea1.firebaseapp.com",
+databaseURL: "https://mindsync-5aea1-default-rtdb.firebaseio.com",
+projectId: "mindsync-5aea1",
+storageBucket: "mindsync-5aea1.firebasestorage.app",
+messagingSenderId: "419028983975",
+appId: "1:419028983975:web:9ba60800901961d731fb82"
 }));
 
-/* ── State ─────────────────────────────────────── */
-let player = "", room = "", qIdx = 0;
-let typRef = null, ansRef = null;
+let player="",room="",q=0;
 
-/* ── Questions ─────────────────────────────────── */
-const Qs = [
-  "Describe our love in one word.",
-  "What's one thing you secretly admire about me?",
-  "Where does our future take us?",
-  "What feeling do only I give you?",
-  "Describe our best memory in three words.",
-  "What's something you wish I knew about you?",
-  "If we were a song, what genre would we be?",
-  "What does comfort feel like with me?",
-  "Which moment made you fall deeper in love?",
-  "Where's one place you'd love to take me?",
+const Qs=[
+"Describe our love in one word ❤️",
+"What makes you feel safe with me?",
+"What is our perfect date?",
+"What do you admire secretly about me?",
+"Where should we travel together?",
+"What reminds you of me instantly?"
 ];
 
-/* ── Screen switcher ───────────────────────────── */
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s => {
-    s.classList.remove("show", "out");
-    if (s.id !== id) s.classList.add("out");
-  });
-  // double rAF so "out" transition fires before "show"
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.getElementById(id).classList.add("show");
-  }));
+/* NAV */
+function show(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("show"));
+document.getElementById(id).classList.add("show");
 }
 
-/* ── JOIN ──────────────────────────────────────── */
-const joinBtn = document.getElementById("joinBtn");
-const nameInp = document.getElementById("nameInp");
-const roomInp = document.getElementById("roomInp");
+/* JOIN */
+start.onclick=()=>{
+player=name.value.trim();
+room=room.value.trim().toUpperCase();
+if(!player||!room)return alert("Enter details");
+show("question");
+loadQ();
+listen();
+};
 
-joinBtn.addEventListener("click", () => {
-  player = nameInp.value.trim();
-  room   = roomInp.value.trim().toUpperCase();
-  if (!player) { shake(nameInp.closest(".field")); return; }
-  if (!room)   { shake(roomInp.closest(".field")); return; }
-  qIdx = 0;
-  show("s-question");
-  loadQ();
-  startListen();
+/* LOAD QUESTION */
+function loadQ(){
+qText.textContent=Qs[q%Qs.length];
+ans.value="";
+}
+
+/* TYPING */
+ans.oninput=()=>{
+set(ref(db,room+"/typing"),player);
+setTimeout(()=>set(ref(db,room+"/typing"),null),1000);
+};
+
+/* SEND */
+send.onclick=()=>{
+if(!ans.value)return;
+set(ref(db,room+"/answers/"+player),ans.value);
+};
+
+/* LISTEN */
+function listen(){
+
+onValue(ref(db,room+"/typing"),snap=>{
+let v=snap.val();
+typing.textContent=(v && v!==player)? v+" is typing..." : "";
 });
 
-nameInp.addEventListener("keydown", e => { if (e.key === "Enter") roomInp.focus(); });
-roomInp.addEventListener("keydown", e => { if (e.key === "Enter") joinBtn.click(); });
-
-/* ── QUESTION ──────────────────────────────────── */
-const qText   = document.getElementById("qText");
-const qOf     = document.getElementById("qOf");
-const ansInp  = document.getElementById("ansInp");
-const ansWrap = document.getElementById("ansWrap");
-const charEl  = document.getElementById("charEl");
-const sendBtn = document.getElementById("sendBtn");
-const waitMsg = document.getElementById("waitMsg");
-const typeEl  = document.getElementById("typeEl");
-const typeWho = document.getElementById("typeWho");
-
-function loadQ() {
-  qText.textContent      = Qs[qIdx % Qs.length];
-  qOf.textContent        = (qIdx % Qs.length + 1) + " of " + Qs.length;
-  ansInp.value           = "";
-  charEl.textContent     = "0 / 80";
-  ansInp.style.height    = "auto";
-  sendBtn.disabled       = false;
-  ansWrap.style.display  = "block";
-  waitMsg.classList.remove("on");
-  typeEl.classList.remove("on");
+onValue(ref(db,room+"/answers"),snap=>{
+const d=snap.val();
+if(d && Object.keys(d).length>=2){
+showResult(d);
 }
-
-/* auto-grow textarea */
-ansInp.addEventListener("input", () => {
-  const n = ansInp.value.length;
-  charEl.textContent = n + " / 80";
-  ansInp.style.height = "auto";
-  ansInp.style.height = Math.min(ansInp.scrollHeight, 130) + "px";
-  if (room) set(ref(db, room + "/typing"), n > 0 ? player : null);
 });
 
-/* focus ring */
-ansInp.addEventListener("focus", () => ansWrap.classList.add("focused"));
-ansInp.addEventListener("blur",  () => ansWrap.classList.remove("focused"));
+}
 
-/* allow text selection in textarea */
-ansInp.style.userSelect = "text";
-ansInp.style.webkitUserSelect = "text";
-
-/* send */
-sendBtn.addEventListener("click", () => {
-  const a = ansInp.value.trim();
-  if (!a) { shake(ansWrap); return; }
-  sendBtn.disabled      = true;
-  ansWrap.style.display = "none";
-  waitMsg.classList.add("on");
-  set(ref(db, room + "/answers/" + player), a);
-  set(ref(db, room + "/typing"), null);
+/* SMART SCORE */
+function calcScore(a,b){
+a=a.toLowerCase();b=b.toLowerCase();
+let match=0;
+a.split(" ").forEach(w=>{
+if(b.includes(w))match++;
 });
-
-/* ── FIREBASE LISTENERS ─────────────────────────── */
-function startListen() {
-  stopListen();
-
-  typRef = ref(db, room + "/typing");
-  onValue(typRef, snap => {
-    const v = snap.val();
-    if (v && v !== player) {
-      typeWho.textContent = v + " is thinking\u2026";
-      typeEl.classList.add("on");
-    } else {
-      typeEl.classList.remove("on");
-    }
-  });
-
-  ansRef = ref(db, room + "/answers");
-  onValue(ansRef, snap => {
-    const d = snap.val();
-    if (d && Object.keys(d).length >= 2) showResult(d);
-  });
+return Math.min(95,60+match*10);
 }
 
-function stopListen() {
-  if (typRef) { off(typRef); typRef = null; }
-  if (ansRef) { off(ansRef); ansRef = null; }
+/* RESULT */
+function showResult(d){
+show("result");
+
+let p=Object.keys(d);
+let score=calcScore(d[p[0]],d[p[1]]);
+
+let tag=
+score>90?"Soulmates 💞":
+score>80?"Deep Love ❤️":
+score>70?"Strong Bond 🔥":
+"Growing Together 🌱";
+
+animateScore(score);
+
+tagEl.innerText=tag;
+
+/* save history */
+let h=JSON.parse(localStorage.getItem("ms_v3")||"[]");
+h.push(score);
+localStorage.setItem("ms_v3",JSON.stringify(h));
 }
 
-/* ── RESULT ─────────────────────────────────────── */
-const resTag  = document.getElementById("resTag");
-const scoreN  = document.getElementById("scoreNum");
-const pRing   = document.getElementById("pRing");
-const c1n = document.getElementById("c1n");
-const c1a = document.getElementById("c1a");
-const c2n = document.getElementById("c2n");
-const c2a = document.getElementById("c2a");
-const nextBtn = document.getElementById("nextBtn");
-
-const TAGS = [
-  [92, "Inseparable \uD83D\uDCAB"],
-  [82, "Deeply Connected \u2764\uFE0F"],
-  [72, "Strong Bond \uD83D\uDD25"],
-  [0,  "Growing Together \uD83C\uDF31"],
-];
-
-function showResult(d) {
-  stopListen();
-  const ps    = Object.keys(d);
-  const score = Math.floor(Math.random() * 22) + 78;
-  const tag   = TAGS.find(([m]) => score >= m)[1];
-
-  c1n.textContent = ps[0];
-  c1a.textContent = "\u201c" + d[ps[0]] + "\u201d";
-  c2n.textContent = ps[1];
-  c2a.textContent = "\u201c" + d[ps[1]] + "\u201d";
-  resTag.textContent = tag;
-
-  show("s-result");
-  animRing(score);
-
-  const h = JSON.parse(localStorage.getItem("msh") || "[]");
-  h.push({ score, date: new Date().toISOString() });
-  localStorage.setItem("msh", JSON.stringify(h));
+/* animation */
+function animateScore(target){
+let cur=0;
+let i=setInterval(()=>{
+cur+=2;
+score.innerText=cur+"%";
+if(cur>=target)clearInterval(i);
+},20);
 }
 
-function animRing(target) {
-  // r = 76.75, circ = 2π×76.75 ≈ 482.3
-  const circ = 2 * Math.PI * 76.75;
-  pRing.style.strokeDasharray  = circ;
-  pRing.style.strokeDashoffset = circ;
-  scoreN.textContent = "0%";
-  let cur = 0;
-  const step = target / 55;
-  const iv = setInterval(() => {
-    cur = Math.min(cur + step, target);
-    scoreN.textContent = Math.floor(cur) + "%";
-    pRing.style.strokeDashoffset = circ - (cur / 100) * circ;
-    if (cur >= target) clearInterval(iv);
-  }, 16);
-}
+/* NEXT */
+next.onclick=()=>{
+remove(ref(db,room));
+q++;
+show("question");
+loadQ();
+};
 
-nextBtn.addEventListener("click", () => {
-  remove(ref(db, room));
-  qIdx++;
-  show("s-question");
-  loadQ();
-  startListen();
-});
+/* refs */
+const score=document.getElementById("score");
+const tagEl=document.getElementById("tag");
 
-/* ── UTILS ──────────────────────────────────────── */
-function shake(el) {
-  el.classList.add("shake");
-  el.addEventListener("animationend", () => el.classList.remove("shake"), { once: true });
-}
-
-/* ── BOOT ───────────────────────────────────────── */
-show("s-join");
 </script>
 
 </body>
