@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>MindSync v3</title>
+<title>MindSync v3 Fixed</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -11,9 +11,7 @@
 :root{
 --pink:#ff375f;
 --purple:#bf5af2;
---bg:#000;
 --glass:rgba(255,255,255,.06);
---text:#fff;
 }
 
 body{
@@ -21,20 +19,28 @@ height:100dvh;
 background:#000;
 font-family:-apple-system;
 color:#fff;
-overflow:hidden;
+/* FIXED: removed overflow hidden */
+overflow:auto;
 }
 
-/* glow */
+/* background */
 #bg{
 position:fixed;
 inset:0;
 background:
 radial-gradient(circle at 20% 20%,rgba(255,55,95,.25),transparent),
 radial-gradient(circle at 80% 80%,rgba(191,90,242,.25),transparent);
-z-index:-1;
+z-index:0;
+pointer-events:none;
 }
 
-/* screens */
+/* app */
+#app{
+position:relative;
+z-index:2;
+}
+
+/* screen */
 .screen{
 position:absolute;
 inset:0;
@@ -80,14 +86,17 @@ background:linear-gradient(135deg,var(--pink),var(--purple));
 -webkit-text-fill-color:transparent;
 }
 
-/* inputs */
+/* inputs FIX */
 input,textarea{
 width:100%;
 background:transparent;
 border:none;
 color:#fff;
-font-size:16px;
+font-size:16px; /* IMPORTANT for iPhone */
 outline:none;
+pointer-events:auto;
+user-select:text;
+-webkit-user-select:text;
 }
 
 /* question */
@@ -126,7 +135,6 @@ margin-top:8px;
 font-size:18px;
 opacity:.8;
 }
-
 </style>
 </head>
 
@@ -192,7 +200,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebas
 import { getDatabase, ref, set, onValue, remove } 
 from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-/* 🔥 YOUR FIREBASE CONFIG */
+/* FIREBASE */
 const db = getDatabase(initializeApp({
 apiKey: "AIzaSyA2dbln4SU5tcxgekWt_kUkoz6rBmMhLk4",
 authDomain: "mindsync-5aea1.firebaseapp.com",
@@ -230,25 +238,25 @@ loadQ();
 listen();
 };
 
-/* LOAD QUESTION */
+/* LOAD */
 function loadQ(){
 qText.textContent=Qs[q%Qs.length];
 ans.value="";
 }
 
-/* TYPING */
+/* typing */
 ans.oninput=()=>{
 set(ref(db,room+"/typing"),player);
 setTimeout(()=>set(ref(db,room+"/typing"),null),1000);
 };
 
-/* SEND */
+/* send */
 send.onclick=()=>{
 if(!ans.value)return;
 set(ref(db,room+"/answers/"+player),ans.value);
 };
 
-/* LISTEN */
+/* listen */
 function listen(){
 
 onValue(ref(db,room+"/typing"),snap=>{
@@ -265,7 +273,7 @@ showResult(d);
 
 }
 
-/* SMART SCORE */
+/* smart score */
 function calcScore(a,b){
 a=a.toLowerCase();b=b.toLowerCase();
 let match=0;
@@ -275,7 +283,7 @@ if(b.includes(w))match++;
 return Math.min(95,60+match*10);
 }
 
-/* RESULT */
+/* result */
 function showResult(d){
 show("result");
 
@@ -289,10 +297,9 @@ score>70?"Strong Bond 🔥":
 "Growing Together 🌱";
 
 animateScore(score);
-
 tagEl.innerText=tag;
 
-/* save history */
+/* history */
 let h=JSON.parse(localStorage.getItem("ms_v3")||"[]");
 h.push(score);
 localStorage.setItem("ms_v3",JSON.stringify(h));
@@ -303,12 +310,12 @@ function animateScore(target){
 let cur=0;
 let i=setInterval(()=>{
 cur+=2;
-score.innerText=cur+"%";
+scoreEl.innerText=cur+"%";
 if(cur>=target)clearInterval(i);
 },20);
 }
 
-/* NEXT */
+/* next */
 next.onclick=()=>{
 remove(ref(db,room));
 q++;
@@ -317,8 +324,12 @@ loadQ();
 };
 
 /* refs */
-const score=document.getElementById("score");
+const scoreEl=document.getElementById("score");
 const tagEl=document.getElementById("tag");
+
+/* EXTRA FIX (iPhone tap) */
+name.addEventListener("click",()=>name.focus());
+room.addEventListener("click",()=>room.focus());
 
 </script>
 
